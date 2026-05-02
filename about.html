@@ -19,8 +19,123 @@
 		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
 		<link rel="canonical" href="https://ogcindustries.com/about.html" />
 		<link rel="stylesheet" href="assets/css/main.css" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+		<style>
+			#map-container {
+				background: #f8f8f6;
+				border-radius: 8px;
+				padding: 1.5rem;
+				margin-bottom: 1.5rem;
+			}
+			#us-map {
+				width: 100%;
+				height: auto;
+				display: block;
+			}
+			.state-path {
+				transition: opacity 0.15s;
+			}
+			.state-path:hover {
+				opacity: 0.8;
+			}
+			#map-tooltip {
+				display: none;
+				position: fixed;
+				background: #fff;
+				border: 1px solid #ddd;
+				border-radius: 6px;
+				padding: 8px 12px;
+				font-size: 13px;
+				pointer-events: none;
+				z-index: 1000;
+				box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+			}
+			.map-legend {
+				display: flex;
+				gap: 1.5rem;
+				margin-top: 1rem;
+				flex-wrap: wrap;
+			}
+			.legend-item {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				font-size: 13px;
+				color: #555;
+			}
+			.legend-swatch {
+				width: 16px;
+				height: 16px;
+				border-radius: 3px;
+				flex-shrink: 0;
+			}
+			.licensed-swatch { background: #c8860a; }
+			.unlicensed-swatch { background: #d8d5cc; border: 1px solid #bbb; }
+
+			.state-cards {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+				gap: 1.5rem;
+				margin-bottom: 1.5rem;
+			}
+			.state-card {
+				background: #fff;
+				border: 1px solid #e0ddd6;
+				border-radius: 8px;
+				padding: 1.5rem;
+				border-left: 4px solid #c8860a;
+			}
+			.state-card h3 {
+				margin: 0 0 0.5rem;
+				font-size: 1.1rem;
+				color: #2c2a24;
+				border-bottom: none;
+			}
+			.state-card .license-badge {
+				display: inline-block;
+				background: #fef3e2;
+				color: #8a5a00;
+				font-size: 11px;
+				font-weight: 600;
+				letter-spacing: 0.05em;
+				text-transform: uppercase;
+				border-radius: 4px;
+				padding: 3px 8px;
+				margin-bottom: 0.75rem;
+			}
+			.state-card .detail-row {
+				display: flex;
+				justify-content: space-between;
+				font-size: 0.825rem;
+				padding: 4px 0;
+				border-bottom: 1px solid #f0ece4;
+				color: #555;
+			}
+			.state-card .detail-row:last-child {
+				border-bottom: none;
+			}
+			.state-card .detail-label {
+				color: #999;
+			}
+			.disclaimer-box {
+				background: #fffbf2;
+				border: 1px solid #f0e0b0;
+				border-radius: 6px;
+				padding: 1rem 1.25rem;
+				font-size: 0.85rem;
+				color: #7a6020;
+				line-height: 1.6;
+			}
+			.disclaimer-box strong {
+				display: block;
+				margin-bottom: 4px;
+			}
+		</style>
 	</head>
 	<body class="is-preload">
+
+		<div id="map-tooltip"></div>
 
 		<!-- Wrapper -->
 			<div id="wrapper">
@@ -125,42 +240,53 @@
 									</ul>
 								</section>
 
-							<!-- Section -->
+							<!-- Section: Licensed States Map (replaces Why Choose Us) -->
 								<section>
 									<header class="major">
-										<h2>Why Choose OGC INDUSTRIES</h2>
+										<h2>Where We're Licensed</h2>
 									</header>
-									<div class="posts">
-										<article>
-											<a href="#" class="image"><img src="images/pic01.jpg" alt="Licensed and certified professionals" /></a>
-											<h3>Licensed & Certified</h3>
-											<p>Our team consists of fully licensed electricians with current certifications and extensive training in the latest electrical standards and technologies.</p>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic02.jpg" alt="Safety standards compliance" /></a>
-											<h3>Safety Commitment</h3>
-											<p>We maintain the highest safety standards and comply with all OSHA regulations, NEC codes, and local electrical codes to protect your property and people.</p>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic03.jpg" alt="Reliable on-time service" /></a>
-											<h3>Reliability & Professionalism</h3>
-											<p>We understand the importance of timely project completion. Our team delivers quality work on schedule, every time.</p>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic04.jpg" alt="24/7 emergency support" /></a>
-											<h3>24/7 Emergency Support</h3>
-											<p>Electrical emergencies don't wait. OGC INDUSTRIES offers round-the-clock emergency response to minimize your downtime.</p>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic05.jpg" alt="Competitive pricing" /></a>
-											<h3>Competitive Pricing</h3>
-											<p>Quality electrical work at competitive rates. We provide transparent quotes and flexible payment options for your convenience.</p>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic06.jpg" alt="Customer satisfaction" /></a>
-											<h3>Customer Satisfaction</h3>
-											<p>Your satisfaction is our priority. We work closely with clients to understand their needs and deliver solutions that exceed expectations.</p>
-										</article>
+									<p>OGC INDUSTRIES holds active electrical contractor licenses issued by the relevant state licensing boards. All work is performed in strict compliance with local codes, the National Electrical Code (NEC), and applicable OSHA regulations.</p>
+
+									<div id="map-container">
+										<svg id="us-map" viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" aria-label="US map showing states where OGC Industries holds an electrical contractor license. Currently licensed in Tennessee."></svg>
+										<div class="map-legend">
+											<div class="legend-item">
+												<div class="legend-swatch licensed-swatch"></div>
+												<span>Licensed &amp; Active</span>
+											</div>
+											<div class="legend-item">
+												<div class="legend-swatch unlicensed-swatch"></div>
+												<span>Not currently licensed</span>
+											</div>
+										</div>
+									</div>
+
+									<div class="state-cards">
+										<div class="state-card">
+											<div class="license-badge">Active License</div>
+											<h3>Tennessee</h3>
+											<div class="detail-row">
+												<span class="detail-label">License Type</span>
+												<span>Electrical Contractor</span>
+											</div>
+											<div class="detail-row">
+												<span class="detail-label">Issuing Board</span>
+												<span>TN Electrical Contractors Board</span>
+											</div>
+											<div class="detail-row">
+												<span class="detail-label">Status</span>
+												<span style="color:#2a7a2a;font-weight:600;">&#10003; Active</span>
+											</div>
+											<div class="detail-row">
+												<span class="detail-label">Service Types</span>
+												<span>Industrial, Commercial, Residential</span>
+											</div>
+										</div>
+									</div>
+
+									<div class="disclaimer-box">
+										<strong>Licensing Notice</strong>
+										OGC INDUSTRIES operates only within states where we hold a valid, active license. If you are located in a state not listed above, please <a href="contact.html">contact us</a> — we may be able to refer you to a trusted partner or assist with projects that fall within our licensed jurisdictions.
 									</div>
 								</section>
 
@@ -222,7 +348,7 @@
 									</header>
 									<p>At OGC INDUSTRIES, we're committed to:</p>
 									<ul class="alt">
-										<li>Safety & Compliance</li>
+										<li>Safety &amp; Compliance</li>
 										<li>Quality Workmanship</li>
 										<li>Professional Service</li>
 										<li>Customer Satisfaction</li>
@@ -239,8 +365,8 @@
 									<ul class="contact">
 										<li class="icon solid fa-envelope"><a href="mailto:info@ogcindustries.com">info@ogcindustries.com</a></li>
 										<li class="icon solid fa-phone"><a href="tel:+1-555-123-4567" aria-label="Call OGC INDUSTRIES">(555) 123-4567</a></li>
-										<li class="icon solid fa-home">123 Industrial Drive<br />
-										Suite 200, City, ST 12345</li>
+										<li class="icon solid fa-home">652 West Iris Dr<br />
+										Nashville, TN 37204</li>
 									</ul>
 								</section>
 
@@ -260,6 +386,53 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+
+			<script>
+				const LICENSED = new Set(["TN"]);
+
+				const STATE_ABBR = {
+					Alabama:"AL",Alaska:"AK",Arizona:"AZ",Arkansas:"AR",California:"CA",Colorado:"CO",
+					Connecticut:"CT",Delaware:"DE",Florida:"FL",Georgia:"GA",Hawaii:"HI",Idaho:"ID",
+					Illinois:"IL",Indiana:"IN",Iowa:"IA",Kansas:"KS",Kentucky:"KY",Louisiana:"LA",
+					Maine:"ME",Maryland:"MD",Massachusetts:"MA",Michigan:"MI",Minnesota:"MN",
+					Mississippi:"MS",Missouri:"MO",Montana:"MT",Nebraska:"NE",Nevada:"NV",
+					"New Hampshire":"NH","New Jersey":"NJ","New Mexico":"NM","New York":"NY",
+					"North Carolina":"NC","North Dakota":"ND",Ohio:"OH",Oklahoma:"OK",Oregon:"OR",
+					Pennsylvania:"PA","Rhode Island":"RI","South Carolina":"SC","South Dakota":"SD",
+					Tennessee:"TN",Texas:"TX",Utah:"UT",Vermont:"VT",Virginia:"VA",Washington:"WA",
+					"West Virginia":"WV",Wisconsin:"WI",Wyoming:"WY","District of Columbia":"DC"
+				};
+
+				const tooltip = document.getElementById("map-tooltip");
+
+				fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json")
+					.then(r => r.json())
+					.then(us => {
+						const svg = d3.select("#us-map");
+						const projection = d3.geoAlbersUsa().scale(1300).translate([487, 305]);
+						const path = d3.geoPath().projection(projection);
+
+						svg.selectAll("path")
+							.data(topojson.feature(us, us.objects.states).features)
+							.enter().append("path")
+							.attr("class", "state-path")
+							.attr("d", path)
+							.attr("fill", d => LICENSED.has(STATE_ABBR[d.properties.name]) ? "#c8860a" : "#d8d5cc")
+							.attr("stroke", d => LICENSED.has(STATE_ABBR[d.properties.name]) ? "#8a5a00" : "#aaa8a0")
+							.attr("stroke-width", "0.6")
+							.on("mousemove", function(event, d) {
+								const abbr = STATE_ABBR[d.properties.name] || "";
+								const licensed = LICENSED.has(abbr);
+								tooltip.style.display = "block";
+								tooltip.style.left = (event.clientX + 14) + "px";
+								tooltip.style.top = (event.clientY - 10) + "px";
+								tooltip.innerHTML = `<strong>${d.properties.name}</strong> &nbsp; <span style="color:${licensed ? '#8a5a00' : '#999'}">${licensed ? '&#10003; Licensed' : 'Not licensed'}</span>`;
+							})
+							.on("mouseleave", function() {
+								tooltip.style.display = "none";
+							});
+					});
+			</script>
 
 	</body>
 </html>
