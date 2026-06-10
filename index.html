@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OGC Industries – Professional Electrical Contracting</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #07090e;
+    --dark: #0e1220;
+    --steel: #141929;
+    --mid: #1a2238;
+    --orange: #cc1a1a;
+    --orange-lt: #e52020;
+    --orange-dim: rgba(204,26,26,0.15);
+    --silver: #8a96b8;
+    --light: #bcc6e0;
+    --white: #eef2f6;
+    --text: #6a7888;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%; overflow: hidden;
+    font-family: 'Barlow', sans-serif;
+    background: var(--black);
+    color: var(--white);
+  }
+
+  /* ══════════════════════════════════════
+     NAV
+  ══════════════════════════════════════ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    height: 68px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 52px;
+    background: rgba(9,11,14,0.94);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(204,26,26,0.3);
+  }
+  .logo {
+    text-decoration: none; cursor: pointer; user-select: none;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo span { /* individual letter colors set inline */ }
+
+  .nav-links {
+    display: flex; align-items: center; gap: 4px; list-style: none;
+  }
+  .nav-links li button {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.82rem; letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: none; border: none; cursor: pointer;
+    color: var(--light); padding: 8px 14px;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links li button::after {
+    content: ''; position: absolute; bottom: 2px; left: 14px; right: 14px;
+    height: 2px; background: #cc1a1a;
+    transform: scaleX(0); transition: transform 0.25s;
+  }
+  .nav-links li button:hover { color: var(--white); }
+  .nav-links li button:hover::after,
+  .nav-links li button.active::after { transform: scaleX(1); }
+  .nav-links li button.active { color: var(--white); }
+
+  /* dropdown */
+  .nav-drop { position: relative; }
+  .nav-drop > button::before {
+    content: '▾'; margin-left: 5px; font-size: 0.7rem;
+  }
+  .dropdown {
+    position: absolute; top: 100%; left: 0;
+    padding-top: 10px; /* invisible bridge so cursor doesn't leave hover zone */
+    background: transparent;
+    min-width: 200px;
+    opacity: 0; pointer-events: none;
+    transform: translateY(-4px);
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 300;
+  }
+  .dropdown-inner {
+    background: var(--dark);
+    border: 1px solid rgba(204,26,26,0.28);
+  }
+  .nav-drop:hover .dropdown { opacity: 1; pointer-events: all; transform: translateY(0); }
+  .dropdown button {
+    display: block; width: 100%;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600; font-size: 0.8rem; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: none; border: none; cursor: pointer;
+    color: var(--light); padding: 11px 18px; text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.15s, color 0.15s;
+  }
+  .dropdown button:last-child { border-bottom: none; }
+  .dropdown button:hover { background: var(--orange-dim); color: var(--orange); }
+
+  .nav-cta {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.8rem; letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: #cc1a1a; color: var(--white) !important;
+    border: none; cursor: pointer;
+    padding: 9px 22px;
+    clip-path: polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+    transition: background 0.2s;
+    margin-left: 8px;
+  }
+  .nav-cta:hover { background: #e52020 !important; }
+  .nav-cta::after { display: none !important; }
+
+  /* hamburger */
+  .ham { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+  .ham span { display: block; width: 24px; height: 2px; background: var(--white); transition: 0.3s; }
+
+  /* ══════════════════════════════════════
+     SECTION ENGINE — full-viewport panels
+  ══════════════════════════════════════ */
+  #app {
+    position: fixed; inset: 0; top: 68px;
+    overflow: hidden;
+  }
+  .panel {
+    position: absolute; inset: 0;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.45s ease, transform 0.45s ease;
+    transform: translateY(16px);
+    overflow-y: auto; overflow-x: hidden;
+  }
+  .panel.active {
+    opacity: 1; pointer-events: all;
+    transform: translateY(0);
+  }
+
+  /* ══════════════════════════════════════
+     PANEL: HOME  (hero slider)
+  ══════════════════════════════════════ */
+  #panel-home {
+    display: flex; flex-direction: column;
+  }
+  .slides-wrap {
+    position: relative; flex: 1;
+    overflow: hidden;
+  }
+  .slides {
+    display: flex; height: 100%;
+    transition: transform 0.85s cubic-bezier(0.77,0,0.175,1);
+  }
+  .slide {
+    min-width: 100%; height: 100%;
+    position: relative; display: flex; align-items: center;
+  }
+  .slide-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    transform: scale(1.07);
+    transition: transform 8s ease-out;
+  }
+  .slide.on .slide-bg { transform: scale(1); }
+  .slide-ov {
+    position: absolute; inset: 0;
+    background: linear-gradient(105deg,rgba(0,0,0,0.75) 38%,rgba(9,11,14,0.25) 100%);
+  }
+  .slide-body {
+    position: relative; z-index: 2; padding: 0 80px;
+    max-width: 800px;
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.7s 0.5s, transform 0.7s 0.5s;
+  }
+  .slide.on .slide-body { opacity: 1; transform: translateY(0); }
+  .slide-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--orange);
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .slide-tag::before { content:''; width:28px; height:2px; background:var(--orange); display:block; }
+  .slide h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(3rem,7vw,5.5rem); font-weight: 900;
+    line-height: 0.93; text-transform: uppercase;
+    margin-bottom: 20px;
+    text-shadow: 0 4px 32px rgba(0,0,0,0.5);
+  }
+  .slide h1 em { color: #cc1a1a; font-style: normal; }
+  .slide p {
+    font-size: 1.05rem; font-weight: 300;
+    color: var(--light); line-height: 1.65;
+    max-width: 500px; margin-bottom: 34px;
+  }
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.88rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--white);
+    background: #cc1a1a; border: none; cursor: pointer;
+    padding: 13px 30px;
+    clip-path: polygon(7px 0%,100% 0%,calc(100% - 7px) 100%,0% 100%);
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--orange-lt); transform: translateX(3px); }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.88rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--light);
+    background: none; border: 1.5px solid rgba(255,255,255,0.3); cursor: pointer;
+    padding: 12px 28px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
+
+  /* slider controls */
+  .slider-ctrl {
+    position: absolute; bottom: 36px; left: 80px; z-index: 10;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .dots { display: flex; gap: 8px; }
+  .dot {
+    width: 28px; height: 3px; background: rgba(255,255,255,0.28);
+    cursor: pointer; transition: background 0.3s, width 0.3s;
+    border: none;
+  }
+  .dot.on { background: #cc1a1a; width: 44px; }
+  .arrows { display: flex; gap: 8px; }
+  .arr {
+    width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(0,0,0,0.38);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--white);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .arr:hover { border-color: #cc1a1a; background: #cc1a1a; }
+
+  /* stats bar */
+  .stats-bar {
+    height: 72px;
+    background: #cc1a1a;
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 0; flex-shrink: 0;
+  }
+  .stat {
+    padding: 0 36px; border-left: 1px solid rgba(255,255,255,0.25);
+    text-align: center;
+  }
+  .stat:last-child { padding-right: 52px; }
+  .stat-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.7rem; font-weight: 900; line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; opacity: 0.82;
+  }
+
+  /* ══════════════════════════════════════
+     PANEL: SERVICES
+  ══════════════════════════════════════ */
+  #panel-services {
+    background: var(--dark);
+    padding: 52px 60px;
+  }
+  .panel-hd { margin-bottom: 40px; }
+  .sec-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--orange);
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  .sec-tag::before { content:''; width:22px; height:2px; background:var(--orange); }
+  .sec-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(2rem,4vw,3rem); font-weight: 900;
+    text-transform: uppercase; line-height: 0.95;
+  }
+  .sec-title em { color: #cc1a1a; font-style: normal; }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 3px;
+  }
+  .svc {
+    background: var(--steel);
+    padding: 32px 26px;
+    position: relative; overflow: hidden;
+    transition: background 0.25s;
+    cursor: default;
+  }
+  .svc::after {
+    content:''; position:absolute; bottom:0; left:0; right:0;
+    height:3px; background:var(--orange);
+    transform:scaleX(0); transform-origin:left;
+    transition:transform 0.35s;
+  }
+  .svc:hover { background: var(--mid); }
+  .svc:hover::after { transform:scaleX(1); }
+  .svc-ico {
+    width:48px; height:48px; border:1.5px solid rgba(204,26,26,0.35);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--orange); margin-bottom:18px;
+    transition:background 0.25s, border-color 0.25s;
+  }
+  .svc:hover .svc-ico { background:var(--orange-dim); border-color:var(--orange); }
+  .svc h3 {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:1.05rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.06em;
+    margin-bottom:10px;
+  }
+  .svc p { font-size:0.83rem; color:var(--text); line-height:1.6; }
+
+  /* ══════════════════════════════════════
+     PANEL: PROJECTS
+  ══════════════════════════════════════ */
+  #panel-projects {
+    background: var(--steel);
+    padding: 52px 60px;
+  }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 4px;
+    margin-top: 36px;
+  }
+  .proj {
+    position: relative; overflow: hidden; cursor: pointer;
+  }
+  .proj img {
+    width:100%; height:260px; object-fit:cover; display:block;
+    transition:transform 0.55s ease;
+  }
+  .proj:hover img { transform:scale(1.06); }
+  .proj-ov {
+    position:absolute; inset:0;
+    background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,transparent 55%);
+    display:flex; flex-direction:column; justify-content:flex-end;
+    padding:22px 20px;
+  }
+  .proj-cat {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:0.68rem; font-weight:700; letter-spacing:0.2em;
+    text-transform:uppercase; color:var(--orange); margin-bottom:4px;
+  }
+  .proj h4 {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:1.05rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.04em;
+    transform:translateY(6px); transition:transform 0.3s;
+  }
+  .proj:hover h4 { transform:translateY(0); }
+
+  /* ══════════════════════════════════════
+     PANEL: ABOUT
+  ══════════════════════════════════════ */
+  #panel-about {
+    background: var(--black);
+    padding: 52px 60px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start;
+  }
+  .about-txt .sec-sub {
+    font-size:0.97rem; font-weight:300; color:var(--text);
+    line-height:1.75; margin-top:14px; margin-bottom:26px;
+    max-width:480px;
+  }
+  .about-list { list-style:none; display:flex; flex-direction:column; gap:12px; }
+  .about-list li {
+    display:flex; gap:12px; font-size:0.9rem; color:var(--light);
+    align-items:flex-start;
+  }
+  .about-list li::before { content:'▸'; color:var(--orange); margin-top:1px; flex-shrink:0; }
+  .about-img-grid {
+    display:grid; grid-template-columns:1fr 1fr; gap:5px;
+    position:relative;
+  }
+  .about-img-grid img { width:100%; height:200px; object-fit:cover; display:block; }
+  .about-badge {
+    position:absolute; bottom:-16px; left:-16px;
+    background:#cc1a1a; padding:18px 22px;
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:900; font-size:1.2rem; line-height:1.1; text-align:center;
+    clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);
+  }
+  .about-badge small { display:block; font-size:0.6rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; opacity:0.82; }
+
+  /* why choose */
+  .why-grid {
+    display:grid; grid-template-columns:1fr 1fr; gap:3px;
+    margin-top:28px;
+  }
+  .why-card {
+    background:var(--steel); padding:26px 22px;
+    border-left:3px solid transparent;
+    transition:border-color 0.25s, background 0.25s;
+  }
+  .why-card:hover { border-left-color:#cc1a1a; background:var(--mid); }
+  .why-num {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:2rem; font-weight:900;
+    color:rgba(204,26,26,0.18); line-height:1; margin-bottom:8px;
+  }
+  .why-card h4 {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:0.9rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.08em;
+    margin-bottom:7px; color:var(--light);
+  }
+  .why-card p { font-size:0.82rem; color:var(--text); line-height:1.6; }
+
+  /* ══════════════════════════════════════
+     PANEL: CONTACT
+  ══════════════════════════════════════ */
+  #panel-contact {
+    background: var(--dark);
+    padding: 52px 60px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start;
+  }
+  .contact-info { display:flex; flex-direction:column; gap:24px; }
+  .c-item { display:flex; gap:16px; align-items:flex-start; }
+  .c-ico {
+    width:44px; height:44px; flex-shrink:0;
+    border:1.5px solid rgba(204,26,26,0.35);
+    display:flex; align-items:center; justify-content:center; color:var(--orange);
+  }
+  .c-item h5 {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:0.68rem; font-weight:700; letter-spacing:0.2em;
+    text-transform:uppercase; color:var(--text); margin-bottom:4px;
+  }
+  .c-item p { font-size:0.95rem; color:var(--light); line-height:1.5; }
+  .c-social { display:flex; gap:10px; margin-top:8px; }
+  .c-social a {
+    width:36px; height:36px; border:1px solid rgba(255,255,255,0.14);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text); text-decoration:none;
+    transition:border-color 0.2s, color 0.2s;
+  }
+  .c-social a:hover { border-color:#cc1a1a; color:#cc1a1a; }
+  .contact-form { display:flex; flex-direction:column; gap:14px; }
+  .f-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .f-group { display:flex; flex-direction:column; gap:6px; }
+  .f-group label {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:0.68rem; font-weight:700; letter-spacing:0.2em;
+    text-transform:uppercase; color:var(--text);
+  }
+  .f-group input, .f-group textarea, .f-group select {
+    background:var(--steel); border:1px solid rgba(255,255,255,0.07);
+    color:var(--white); padding:11px 14px;
+    font-family:'Barlow',sans-serif; font-size:0.9rem;
+    outline:none; transition:border-color 0.2s;
+  }
+  .f-group input:focus,.f-group textarea:focus,.f-group select:focus { border-color:var(--orange); }
+  .f-group textarea { resize:vertical; min-height:100px; }
+  .f-group select option { background:var(--steel); }
+  .submit-btn {
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700; font-size:0.88rem; letter-spacing:0.15em;
+    text-transform:uppercase; color:var(--white);
+    background:var(--orange); border:none; cursor:pointer;
+    padding:14px 32px;
+    clip-path:polygon(7px 0%,100% 0%,calc(100% - 7px) 100%,0% 100%);
+    transition:background 0.2s;
+  }
+  .submit-btn:hover { background:var(--orange-lt); }
+
+  /* ══════════════════════════════════════
+     MOBILE
+  ══════════════════════════════════════ */
+  @media(max-width:900px){
+    nav { padding:0 20px; }
+    .nav-links { display:none; }
+    .ham { display:flex; }
+    .services-grid { grid-template-columns:1fr 1fr; }
+    .projects-grid { grid-template-columns:1fr 1fr; }
+    #panel-about, #panel-contact { grid-template-columns:1fr; gap:36px; padding:36px 24px; }
+    #panel-services, #panel-projects { padding:36px 24px; }
+    .slide-body { padding:0 24px; }
+    .slider-ctrl { left:24px; }
+    .stats-bar { gap:0; }
+    .stat { padding:0 16px; }
+  }
+  @media(max-width:600px){
+    .services-grid, .projects-grid { grid-template-columns:1fr; }
+    .f-row { grid-template-columns:1fr; }
+    .about-img-grid { grid-template-columns:1fr; }
+    .why-grid { grid-template-columns:1fr; }
+  }
+
+  /* ══ SUB-PANELS ══ */
+  .sub-hd { display:flex; align-items:center; gap:16px; margin-bottom:36px; flex-wrap:wrap; }
+  .back-btn {
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:0.76rem; font-weight:700; letter-spacing:0.16em; text-transform:uppercase;
+    color:var(--orange); background:none; border:1px solid rgba(204,26,26,0.35);
+    cursor:pointer; padding:7px 15px; transition:background 0.2s;
+    flex-shrink:0;
+  }
+  .back-btn:hover { background:var(--orange-dim); }
+  .back-btn svg { transition:transform 0.2s; }
+  .back-btn:hover svg { transform:translateX(-3px); }
+  .sub-crumb { font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text); }
+  .sub-crumb em { color:var(--orange); font-style:normal; }
+
+  .sub-layout { display:grid; grid-template-columns:1fr 1fr; gap:52px; align-items:start; }
+  @media(max-width:768px){ .sub-layout{grid-template-columns:1fr;gap:28px;} }
+
+  .sub-txt .sub-tag { font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.28em; text-transform:uppercase; color:var(--orange); display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .sub-txt .sub-tag::before { content:''; width:22px; height:2px; background:var(--orange); }
+  .sub-txt h2 { font-family:'Barlow Condensed',sans-serif; font-size:clamp(1.9rem,4vw,3rem); font-weight:900; text-transform:uppercase; line-height:0.95; margin-bottom:18px; }
+  .sub-txt h2 em { color:var(--orange); font-style:normal; }
+  .sub-txt p { font-size:0.93rem; color:var(--silver); line-height:1.8; margin-bottom:14px; max-width:520px; }
+  .sub-feats { list-style:none; margin-top:18px; display:flex; flex-direction:column; gap:10px; }
+  .sub-feats li { display:flex; align-items:flex-start; gap:10px; font-size:0.9rem; color:var(--light); line-height:1.5; }
+  .sub-feats li::before { content:''; flex-shrink:0; margin-top:7px; width:6px; height:6px; background:var(--orange); clip-path:polygon(50% 0%,100% 100%,0% 100%); }
+  .sub-cta { display:flex; gap:14px; flex-wrap:wrap; margin-top:28px; }
+
+  .sub-img img { width:100%; aspect-ratio:4/3; object-fit:cover; border:1px solid rgba(204,26,26,0.18); margin-bottom:14px; }
+  .sub-img-pair { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .sub-img-pair img { width:100%; aspect-ratio:1; object-fit:cover; border:1px solid rgba(204,26,26,0.15); }
+
+  .panel-sub { background:var(--dark); padding:52px 60px; }
+  @media(max-width:768px){ .panel-sub{padding:36px 24px;} }
+
+  /* projects sub-panels */
+  .proj-sub-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:22px; margin-top:8px; }
+  .proj-sub-card { position:relative; overflow:hidden; cursor:default; }
+  .proj-sub-card img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; transition:transform 0.5s; }
+  .proj-sub-card:hover img { transform:scale(1.04); }
+  .proj-sub-ov { position:absolute; bottom:0; left:0; right:0; padding:18px 20px; background:linear-gradient(transparent,rgba(9,11,14,0.9)); }
+  .proj-sub-ov h4 { font-family:'Barlow Condensed',sans-serif; font-size:1.05rem; font-weight:700; text-transform:uppercase; }
+  .proj-sub-ov span { font-size:0.72rem; color:#cc1a1a; font-family:'Barlow Condensed',sans-serif; letter-spacing:0.1em; text-transform:uppercase; }
+
+  /* about sub-panels */
+  .about-sub-content { max-width:860px; }
+  .about-sub-content h3 { font-family:'Barlow Condensed',sans-serif; font-size:1.4rem; font-weight:700; text-transform:uppercase; margin:28px 0 10px; color:var(--white); }
+  .about-sub-content h3:first-child { margin-top:0; }
+  .about-sub-content p { font-size:0.93rem; color:var(--silver); line-height:1.8; margin-bottom:12px; }
+  .cert-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; margin-top:20px; }
+  .cert-card { background:var(--steel); border:1px solid rgba(204,26,26,0.15); padding:20px; }
+  .cert-card h4 { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.95rem; text-transform:uppercase; color:var(--white); margin-bottom:6px; }
+  .cert-card p { font-size:0.82rem; color:var(--text); margin:0; }
+  .safety-points { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px; }
+  @media(max-width:600px){ .safety-points{grid-template-columns:1fr;} }
+  .safety-pt { background:var(--steel); border-left:3px solid #cc1a1a; padding:16px 18px; }
+  .safety-pt h4 { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.9rem; text-transform:uppercase; color:var(--white); margin-bottom:4px; }
+  .safety-pt p { font-size:0.82rem; color:var(--text); margin:0; }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="show('home')" style="display:flex;align-items:center;gap:10px;">
+      <svg width="36" height="36" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cube outline -->
+        <polygon points="50,8 88,28 88,72 50,92 12,72 12,28" stroke="#0d1a6e" stroke-width="5" fill="none"/>
+        <line x1="50" y1="8" x2="50" y2="52" stroke="#0d1a6e" stroke-width="4"/>
+        <line x1="12" y1="28" x2="50" y2="52" stroke="#0d1a6e" stroke-width="4"/>
+        <line x1="88" y1="28" x2="50" y2="52" stroke="#0d1a6e" stroke-width="4"/>
+        <!-- G letterform inside -->
+        <text x="50" y="62" font-family="Arial Black,sans-serif" font-size="38" font-weight="900" fill="#0d1a6e" text-anchor="middle">G</text>
+        <!-- circuit dot/hook accent -->
+        <circle cx="76" cy="58" r="4" fill="#cc1a1a"/>
+        <path d="M76 62 L76 74 L64 74" stroke="#cc1a1a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div style="display:flex;flex-direction:column;line-height:1;">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.55rem;letter-spacing:0.06em;color:#ffffff;">
+          <span style="color:#ffffff;">O</span><span style="color:#ffffff;">G</span><span style="color:#ffffff;">C</span>
+        </span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:0.6rem;letter-spacing:0.22em;text-transform:uppercase;color:#ffffff;margin-top:-2px;">INDUSTRIES</span>
+      </div>
+    </div>
+  <ul class="nav-links" id="navlinks">
+    <li><button onclick="show('home')" data-page="home" class="active">Home</button></li>
+    <li class="nav-drop">
+      <button data-page="services" onclick="show('services')">Services</button>
+      <div class="dropdown">
+        <div class="dropdown-inner">
+          <button onclick="show('services')">All Services</button>
+          <button onclick="show('svc-industrial')">Industrial Electrical</button>
+          <button onclick="show('svc-commercial')">Commercial</button>
+          <button onclick="show('svc-residential')">Residential</button>
+          <button onclick="show('svc-maintenance')">Maintenance &amp; Repair</button>
+          <button onclick="show('svc-design-build')">Design Build</button>
+          <button onclick="show('svc-emergency')">Emergency Service</button>
+        </div>
+      </div>
+    </li>
+    <li class="nav-drop">
+      <button data-page="projects" onclick="show('projects')">Projects</button>
+      <div class="dropdown">
+        <div class="dropdown-inner">
+          <button onclick="show('projects')">All Projects</button>
+          <button onclick="show('proj-industrial')">Industrial</button>
+          <button onclick="show('proj-commercial')">Commercial</button>
+          <button onclick="show('proj-residential')">Residential</button>
+        </div>
+      </div>
+    </li>
+    <li class="nav-drop">
+      <button data-page="about" onclick="show('about')">About</button>
+      <div class="dropdown">
+        <div class="dropdown-inner">
+          <button onclick="show('about')">Company Overview</button>
+          <button onclick="show('about-why')">Why Choose OGC</button>
+          <button onclick="show('about-safety')">Safety</button>
+          <button onclick="show('about-licenses')">Licenses</button>
+        </div>
+      </div>
+    </li>
+    <li><button onclick="show('contact')" data-page="contact">Contact</button></li>
+    <li><button class="nav-cta" onclick="show('contact')">Get a Quote</button></li>
+  </ul>
+  <button class="ham" id="ham" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- APP CONTAINER -->
+<div id="app">
+
+  <!-- ══ HOME ══ -->
+  <div class="panel active" id="panel-home">
+    <div class="slides-wrap">
+      <div class="slides" id="slides">
+
+        <div class="slide on">
+          <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1600&q=80')"></div>
+          <div class="slide-ov"></div>
+          <div class="slide-body">
+            <div class="slide-tag">Industrial Electrical Experts</div>
+            <h1>Power Your<br><em>Operations</em></h1>
+            <p>High-voltage systems, motor controls, and industrial installations engineered to keep your business running safely and on schedule.</p>
+            <div class="hero-btns">
+              <button class="btn-primary" onclick="show('services')">Our Services →</button>
+              <button class="btn-ghost" onclick="show('contact')">Get a Quote</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide">
+          <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&q=80')"></div>
+          <div class="slide-ov"></div>
+          <div class="slide-body">
+            <div class="slide-tag">Commercial Excellence</div>
+            <h1>Built for<br><em>Business</em></h1>
+            <p>Complete electrical solutions for offices, retail spaces, and commercial facilities — designed, installed, and maintained by licensed professionals.</p>
+            <div class="hero-btns">
+              <button class="btn-primary" onclick="show('services')">Explore Services →</button>
+              <button class="btn-ghost" onclick="show('projects')">View Projects</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide">
+          <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1600&q=80')"></div>
+          <div class="slide-ov"></div>
+          <div class="slide-body">
+            <div class="slide-tag">24/7 Emergency Response</div>
+            <h1>Safety<br><em>First.</em><br>Always.</h1>
+            <p>OSHA-compliant, NEC code-certified, and available around the clock. When emergencies strike, OGC Industries responds fast to minimize downtime.</p>
+            <div class="hero-btns">
+              <button class="btn-primary" onclick="show('contact')">Contact Us Now →</button>
+              <button class="btn-ghost" onclick="show('about')">Learn More</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide">
+          <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80')"></div>
+          <div class="slide-ov"></div>
+          <div class="slide-body">
+            <div class="slide-tag">Residential & New Construction</div>
+            <h1>Wired<br>for <em>Home</em></h1>
+            <p>From new construction to panel upgrades, OGC Industries brings the same professional standards to every residential project — no job too small.</p>
+            <div class="hero-btns">
+              <button class="btn-primary" onclick="show('services')">Our Services →</button>
+              <button class="btn-ghost" onclick="show('contact')">Free Quote</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /slides -->
+
+      <div class="slider-ctrl">
+        <div class="dots" id="dots">
+          <button class="dot on" onclick="goSlide(0)"></button>
+          <button class="dot" onclick="goSlide(1)"></button>
+          <button class="dot" onclick="goSlide(2)"></button>
+          <button class="dot" onclick="goSlide(3)"></button>
+        </div>
+        <div class="arrows">
+          <button class="arr" onclick="stepSlide(-1)">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </button>
+          <button class="arr" onclick="stepSlide(1)">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </div><!-- /slides-wrap -->
+
+    <div class="stats-bar">
+      <div class="stat"><div class="stat-num">15+</div><div class="stat-label">Years Experience</div></div>
+      <div class="stat"><div class="stat-num">500+</div><div class="stat-label">Projects Done</div></div>
+      <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Licensed & Certified</div></div>
+      <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Emergency Service</div></div>
+    </div>
+  </div><!-- /panel-home -->
+
+  <!-- ══ SERVICES ══ -->
+  <div class="panel" id="panel-services">
+    <div class="panel-hd">
+      <div class="sec-tag">What We Do</div>
+      <h2 class="sec-title">Complete Electrical <em>Services</em></h2>
+    </div>
+    <div class="services-grid">
+
+      <div class="svc">
+        <div class="svc-ico">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <h3>Industrial Electrical</h3>
+        <p>High-voltage systems, motor controls, switchgear, and complex industrial installations designed to keep your operations running safely and efficiently.</p>
+      </div>
+
+      <div class="svc">
+        <div class="svc-ico">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <h3>Commercial Services</h3>
+        <p>Full electrical solutions for office buildings, retail spaces, and commercial facilities — including design, installation, and maintenance contracts.</p>
+      </div>
+
+      <div class="svc">
+        <div class="svc-ico">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        </div>
+        <h3>Residential Work</h3>
+        <p>New construction wiring, renovations, panel upgrades, EV charger installs, and comprehensive troubleshooting for homeowners across Nashville.</p>
+      </div>
+
+      <div class="svc">
+        <div class="svc-ico">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        </div>
+        <h3>Maintenance & Repair</h3>
+        <p>Preventive maintenance programs and rapid emergency repair services to minimize downtime and ensure long-term system reliability.</p>
+      </div>
+
+      <div class="svc">
+        <div class="svc-ico">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>Design Build</h3>
+        <p>End-to-end design-build electrical services. Our in-house engineers work alongside your team from concept through commissioning.</p>
+      </div>
+
+      <div class="svc">
+        <div class="svc-ico">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Safety & Compliance</h3>
+        <p>OSHA-compliant audits, arc-flash assessments, NEC code inspections, and electrical safety training programs for your entire workforce.</p>
+      </div>
+
+      <div class="svc">
+        <div class="svc-ico">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        </div>
+        <h3>New Construction</h3>
+        <p>Comprehensive electrical planning and installation for new builds. We coordinate closely with GCs to deliver on-time, code-compliant results.</p>
+      </div>
+
+      <div class="svc">
+        <div class="svc-ico">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+        </div>
+        <h3>24/7 Emergency</h3>
+        <p>Round-the-clock emergency response. Our on-call crews are dispatched fast to restore power and protect your property and people.</p>
+      </div>
+
+    </div>
+  </div><!-- /panel-services -->
+
+  <!-- ══ PROJECTS ══ -->
+  <div class="panel" id="panel-projects">
+    <div class="panel-hd" style="display:flex;justify-content:space-between;align-items:flex-end;">
+      <div>
+        <div class="sec-tag">Our Work</div>
+        <h2 class="sec-title">Recent <em>Projects</em></h2>
+      </div>
+      <button class="btn-ghost" onclick="show('contact')" style="font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;">
+        Start Your Project →
+      </button>
+    </div>
+    <div class="projects-grid">
+      <div class="proj">
+        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80" alt="Industrial Panel">
+        <div class="proj-ov"><div class="proj-cat">Industrial</div><h4>Large-Scale Panel Installation</h4></div>
+      </div>
+      <div class="proj">
+        <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80" alt="Commercial Retrofit">
+        <div class="proj-ov"><div class="proj-cat">Commercial</div><h4>Office Building Electrical Retrofit</h4></div>
+      </div>
+      <div class="proj">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80" alt="Residential Rewire">
+        <div class="proj-ov"><div class="proj-cat">Residential</div><h4>Full Home Rewire & Panel Upgrade</h4></div>
+      </div>
+      <div class="proj">
+        <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80" alt="Motor Controls">
+        <div class="proj-ov"><div class="proj-cat">Industrial</div><h4>Motor Control Center Build-Out</h4></div>
+      </div>
+      <div class="proj">
+        <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80" alt="Data Center">
+        <div class="proj-ov"><div class="proj-cat">Commercial</div><h4>Data Center Critical Power System</h4></div>
+      </div>
+      <div class="proj">
+        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80" alt="Tenant Improvement">
+        <div class="proj-ov"><div class="proj-cat">New Construction</div><h4>Multi-Suite Tenant Improvement</h4></div>
+      </div>
+    </div>
+  </div><!-- /panel-projects -->
+
+  <!-- ══ ABOUT ══ -->
+  <div class="panel" id="panel-about">
+    <div class="about-txt">
+      <div class="sec-tag">Company Overview</div>
+      <h2 class="sec-title">Powering Nashville<br><em>& Beyond</em></h2>
+      <p class="sec-sub">OGC Industries delivers reliable, efficient, and fully compliant electrical contracting services. With over 15 years of expertise, our licensed team is committed to powering your operations safely, on schedule, and at competitive rates.</p>
+      <ul class="about-list">
+        <li>Fully licensed electricians with current NEC certifications</li>
+        <li>OSHA-compliant safety programs on every job site</li>
+        <li>Transparent, itemized quotes — no surprises</li>
+        <li>On-time project delivery, every time</li>
+        <li>24/7 emergency response for unexpected outages</li>
+        <li>Serving Nashville, TN and surrounding communities</li>
+      </ul>
+      <div class="why-grid" style="margin-top:28px;">
+        <div class="why-card"><div class="why-num">01</div><h4>Licensed & Certified</h4><p>Every electrician holds current licenses and NEC certifications.</p></div>
+        <div class="why-card"><div class="why-num">02</div><h4>Safety First</h4><p>OSHA-compliant on every site, every day, every project.</p></div>
+        <div class="why-card"><div class="why-num">03</div><h4>On-Time Delivery</h4><p>Our process ensures quality work delivered on schedule.</p></div>
+        <div class="why-card"><div class="why-num">04</div><h4>Client-Focused</h4><p>Solutions tailored to your needs, exceeding expectations.</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="about-img-grid">
+        <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=600&q=80" alt="Electrical work">
+        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80" alt="Panel work">
+        <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&q=80" alt="Installation">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Wiring">
+        <div class="about-badge">15+<br><small>Years<br>Serving TN</small></div>
+      </div>
+    </div>
+  </div><!-- /panel-about -->
+
+  <!-- ══ CONTACT ══ -->
+  <div class="panel" id="panel-contact">
+    <div class="contact-info">
+      <div>
+        <div class="sec-tag">Get In Touch</div>
+        <h2 class="sec-title">Contact<br><em>OGC Industries</em></h2>
+        <p style="font-size:0.92rem;color:var(--text);line-height:1.7;margin-top:12px;max-width:400px;">
+          Ready to get started? Reach out for a free estimate, emergency service, or to learn how OGC can power your next project.
+        </p>
+      </div>
+      <div class="c-item">
+        <div class="c-ico"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div><h5>Location</h5><p>652 West Iris Dr<br>Nashville, TN 37204</p></div>
+      </div>
+      <div class="c-item">
+        <div class="c-ico"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.06 2.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"/></svg></div>
+        <div><h5>Phone</h5><p>(555) 123-4567</p></div>
+      </div>
+      <div class="c-item">
+        <div class="c-ico"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div><h5>Email</h5><p>info@ogc-ind.com</p></div>
+      </div>
+      <div class="c-item">
+        <div class="c-ico"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></div>
+        <div><h5>Hours</h5><p>Mon–Fri: 7:00 AM – 5:00 PM<br>24/7 Emergency Available</p></div>
+      </div>
+      <div class="c-social">
+        <a href="https://www.facebook.com/ogcindustries" target="_blank">
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/company/ogcindustries" target="_blank">
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/ogcindustries" target="_blank">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="contact-form">
+      <div class="f-row">
+        <div class="f-group"><label>First Name</label><input type="text" placeholder="John"></div>
+        <div class="f-group"><label>Last Name</label><input type="text" placeholder="Smith"></div>
+      </div>
+      <div class="f-row">
+        <div class="f-group"><label>Email</label><input type="email" placeholder="john@company.com"></div>
+        <div class="f-group"><label>Phone</label><input type="tel" placeholder="(615) 000-0000"></div>
+      </div>
+      <div class="f-group">
+        <label>Service Needed</label>
+        <select>
+          <option value="">Select a service…</option>
+          <option>Industrial Electrical</option>
+          <option>Commercial Services</option>
+          <option>Residential Work</option>
+          <option>Maintenance & Repair</option>
+          <option>Design Build</option>
+          <option>New Construction</option>
+          <option>Emergency Service</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="f-group"><label>Message</label><textarea placeholder="Tell us about your project…"></textarea></div>
+      <button class="submit-btn" id="submitBtn">
+        Send Message
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div><!-- /panel-contact -->
+
+
+  <!-- ══ SERVICE SUB-PANELS ══ -->
+
+  <div class="panel panel-sub" id="panel-svc-industrial">
+    <div class="sub-hd">
+      <button class="back-btn" onclick="show('services')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> All Services</button>
+      <div class="sub-crumb">Services &rsaquo; <em>Industrial Electrical</em></div>
+    </div>
+    <div class="sub-layout">
+      <div class="sub-txt">
+        <div class="sub-tag">Industrial</div>
+        <h2>Industrial <em>Electrical</em></h2>
+        <p>OGC Industries specializes in high-voltage industrial electrical systems designed for maximum uptime, safety, and long-term reliability. Our licensed engineers handle everything from initial design through commissioning.</p>
+        <p>We serve manufacturing plants, distribution centers, data facilities, and heavy industrial operations across Nashville and the broader Southeast region.</p>
+        <ul class="sub-feats">
+          <li>High-voltage switchgear design &amp; installation</li>
+          <li>Motor control centers (MCCs) &amp; variable frequency drives</li>
+          <li>400A–4,000A service entrance upgrades</li>
+          <li>Power distribution &amp; bus duct systems</li>
+          <li>Arc-flash hazard analysis &amp; mitigation</li>
+          <li>Industrial lighting — LED retrofit &amp; new installs</li>
+          <li>NEC / NFPA 70E compliant on every project</li>
+        </ul>
+        <div class="sub-cta">
+          <button class="btn-primary" onclick="show('contact')">Get a Free Quote <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+          <button class="btn-ghost" onclick="show('services')">View All Services</button>
+        </div>
+      </div>
+      <div class="sub-img">
+        <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80" alt="Motor Control Center" width="800" height="600" loading="lazy">
+        <div class="sub-img-pair">
+          <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&q=80" alt="Industrial Panel" width="400" height="400" loading="lazy">
+          <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=400&q=80" alt="Switchgear" width="400" height="400" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-sub" id="panel-svc-commercial">
+    <div class="sub-hd">
+      <button class="back-btn" onclick="show('services')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> All Services</button>
+      <div class="sub-crumb">Services &rsaquo; <em>Commercial</em></div>
+    </div>
+    <div class="sub-layout">
+      <div class="sub-txt">
+        <div class="sub-tag">Commercial</div>
+        <h2>Commercial <em>Services</em></h2>
+        <p>From tenant improvements to ground-up construction, OGC Industries delivers complete electrical solutions for office buildings, retail centers, restaurants, hotels, and mixed-use developments.</p>
+        <p>Our in-house design team coordinates directly with architects, GCs, and MEP engineers to ensure seamless integration and code-compliant results on every commercial project.</p>
+        <ul class="sub-feats">
+          <li>Commercial service installations up to 4,000A</li>
+          <li>Tenant improvement &amp; fit-out electrical</li>
+          <li>Lighting design, controls &amp; DALI/BACnet integration</li>
+          <li>Emergency &amp; standby generator systems</li>
+          <li>Fire alarm &amp; life safety coordination (NFPA 72)</li>
+          <li>EV charging station installation</li>
+          <li>Energy audits &amp; IECC / ASHRAE compliance</li>
+        </ul>
+        <div class="sub-cta">
+          <button class="btn-primary" onclick="show('contact')">Get a Free Quote <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+          <button class="btn-ghost" onclick="show('services')">View All Services</button>
+        </div>
+      </div>
+      <div class="sub-img">
+        <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80" alt="Commercial Building" width="800" height="600" loading="lazy">
+        <div class="sub-img-pair">
+          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80" alt="Office electrical" width="400" height="400" loading="lazy">
+          <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=400&q=80" alt="Panel install" width="400" height="400" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-sub" id="panel-svc-residential">
+    <div class="sub-hd">
+      <button class="back-btn" onclick="show('services')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> All Services</button>
+      <div class="sub-crumb">Services &rsaquo; <em>Residential</em></div>
+    </div>
+    <div class="sub-layout">
+      <div class="sub-txt">
+        <div class="sub-tag">Residential</div>
+        <h2>Residential <em>Work</em></h2>
+        <p>Whether you're building new, renovating, or simply need an upgrade, OGC Industries brings the same licensed expertise and professional standards to every home project across the Nashville metro.</p>
+        <p>We're fully insured, NEC-certified, and committed to clean, punctual, code-compliant work — with clear pricing and no surprises.</p>
+        <ul class="sub-feats">
+          <li>New construction wiring &amp; rough-in</li>
+          <li>Panel upgrades (100A → 200A → 400A)</li>
+          <li>Whole-home rewires &amp; aluminum wiring replacement</li>
+          <li>EV charger installation (Level 1 &amp; Level 2)</li>
+          <li>Whole-home surge protection</li>
+          <li>Smart home &amp; automation wiring</li>
+          <li>Home inspection repairs &amp; code corrections</li>
+        </ul>
+        <div class="sub-cta">
+          <button class="btn-primary" onclick="show('contact')">Get a Free Quote <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+          <button class="btn-ghost" onclick="show('services')">View All Services</button>
+        </div>
+      </div>
+      <div class="sub-img">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80" alt="Residential wiring" width="800" height="600" loading="lazy">
+        <div class="sub-img-pair">
+          <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&q=80" alt="Panel upgrade" width="400" height="400" loading="lazy">
+          <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&q=80" alt="Home wiring" width="400" height="400" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-sub" id="panel-svc-maintenance">
+    <div class="sub-hd">
+      <button class="back-btn" onclick="show('services')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> All Services</button>
+      <div class="sub-crumb">Services &rsaquo; <em>Maintenance &amp; Repair</em></div>
+    </div>
+    <div class="sub-layout">
+      <div class="sub-txt">
+        <div class="sub-tag">Maintenance &amp; Repair</div>
+        <h2>Maintenance <em>&amp; Repair</em></h2>
+        <p>Proactive maintenance programs reduce risk, extend equipment life, and prevent costly unplanned downtime. OGC Industries offers structured preventive maintenance contracts for commercial and industrial clients.</p>
+        <p>When something does go wrong, our dispatch team responds fast — minimizing exposure and restoring normal operations as quickly as possible.</p>
+        <ul class="sub-feats">
+          <li>Scheduled preventive maintenance (monthly, quarterly, annual)</li>
+          <li>Thermal imaging &amp; infrared inspection</li>
+          <li>Circuit breaker testing &amp; replacement</li>
+          <li>Transformer maintenance &amp; oil testing</li>
+          <li>Ground fault &amp; arc fault troubleshooting</li>
+          <li>Generator load bank testing &amp; ATS service</li>
+          <li>24/7 emergency dispatch — average response under 2 hours</li>
+        </ul>
+        <div class="sub-cta">
+          <button class="btn-primary" onclick="show('contact')">Request a Maintenance Quote <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+          <button class="btn-ghost" onclick="show('services')">View All Services</button>
+        </div>
+      </div>
+      <div class="sub-img">
+        <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80" alt="Electrical maintenance" width="800" height="600" loading="lazy">
+        <div class="sub-img-pair">
+          <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&q=80" alt="Repair work" width="400" height="400" loading="lazy">
+          <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&q=80" alt="Panel service" width="400" height="400" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-sub" id="panel-svc-design-build">
+    <div class="sub-hd">
+      <button class="back-btn" onclick="show('services')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> All Services</button>
+      <div class="sub-crumb">Services &rsaquo; <em>Design Build</em></div>
+    </div>
+    <div class="sub-layout">
+      <div class="sub-txt">
+        <div class="sub-tag">Design Build</div>
+        <h2>Design <em>Build</em></h2>
+        <p>OGC Industries offers a fully integrated design-build delivery model — our licensed engineers handle electrical system design in-house and our field crews execute installation. One contract, one point of accountability.</p>
+        <p>This approach eliminates coordination gaps, compresses project schedules, and reduces total cost compared to traditional design-bid-build processes.</p>
+        <ul class="sub-feats">
+          <li>In-house PE-stamped electrical engineering &amp; CAD drawings</li>
+          <li>Load calculations, fault current studies &amp; coordination studies</li>
+          <li>Design-build for new construction &amp; major renovations</li>
+          <li>BIM/Revit coordination with MEP teams</li>
+          <li>Permit acquisition &amp; AHJ liaison services</li>
+          <li>Value engineering &amp; constructability review</li>
+          <li>Commissioning &amp; owner training</li>
+        </ul>
+        <div class="sub-cta">
+          <button class="btn-primary" onclick="show('contact')">Start Your Project <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+          <button class="btn-ghost" onclick="show('services')">View All Services</button>
+        </div>
+      </div>
+      <div class="sub-img">
+        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80" alt="Design build project" width="800" height="600" loading="lazy">
+        <div class="sub-img-pair">
+          <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400&q=80" alt="Blueprints" width="400" height="400" loading="lazy">
+          <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=400&q=80" alt="Construction" width="400" height="400" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-sub" id="panel-svc-emergency">
+    <div class="sub-hd">
+      <button class="back-btn" onclick="show('services')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> All Services</button>
+      <div class="sub-crumb">Services &rsaquo; <em>Emergency Service</em></div>
+    </div>
+    <div class="sub-layout">
+      <div class="sub-txt">
+        <div class="sub-tag">Emergency Service</div>
+        <h2>24/7 <em>Emergency</em></h2>
+        <p>Power failures, tripped breakers, downed lines, and electrical faults don't keep business hours. OGC Industries maintains a dedicated on-call crew available around the clock, 365 days a year.</p>
+        <p>Our emergency response team is staged in Nashville and can reach most service area locations within two hours — often faster. We handle everything from diagnosis to restoration in a single dispatch.</p>
+        <ul class="sub-feats">
+          <li>24/7/365 on-call dispatch — call (555) 123-4567</li>
+          <li>Typical response time under 2 hours in Nashville metro</li>
+          <li>Storm damage &amp; power restoration</li>
+          <li>Tripped breakers, blown fuses &amp; panel failures</li>
+          <li>Equipment failures &amp; motor burnouts</li>
+          <li>Temporary power supply during extended outages</li>
+          <li>Post-emergency safety inspection &amp; code compliance</li>
+        </ul>
+        <div class="sub-cta">
+          <button class="btn-primary" style="background:#c0392b;" onclick="show('contact')">Call Emergency Line — (555) 123-4567</button>
+          <button class="btn-ghost" onclick="show('services')">View All Services</button>
+        </div>
+      </div>
+      <div class="sub-img">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80" alt="Emergency electrical repair" width="800" height="600" loading="lazy">
+        <div class="sub-img-pair">
+          <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&q=80" alt="Night repair" width="400" height="400" loading="lazy">
+          <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&q=80" alt="Electrical emergency" width="400" height="400" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PROJECT SUB-PANELS ══ -->
+
+  <div class="panel panel-sub" id="panel-proj-industrial">
+    <div class="sub-hd">
+      <button class="back-btn" onclick="show('projects')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> All Projects</button>
+      <div class="sub-crumb">Projects &rsaquo; <em>Industrial</em></div>
+    </div>
+    <div class="panel-hd" style="margin-bottom:28px;">
+      <div class="sec-tag">Our Work</div>
+      <h2 class="sec-title">Industrial <em>Projects</em></h2>
+    </div>
+    <div class="proj-sub-grid">
+      <div class="proj-sub-card">
+        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=700&q=80" alt="Large-Scale Panel Installation" width="700" height="525" loading="lazy">
+        <div class="proj-sub-ov"><span>Industrial</span><h4>Large-Scale Panel Installation</h4></div>
+      </div>
+      <div class="proj-sub-card">
+        <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=700&q=80" alt="Motor Control Center Build-Out" width="700" height="525" loading="lazy">
+        <div class="proj-sub-ov"><span>Industrial</span><h4>Motor Control Center Build-Out</h4></div>
+      </div>
+      <div class="proj-sub-card">
+        <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=700&q=80" alt="High-Voltage Switchgear Upgrade" width="700" height="525" loading="lazy">
+        <div class="proj-sub-ov"><span>Industrial</span><h4>High-Voltage Switchgear Upgrade</h4></div>
+      </div>
+      <div class="proj-sub-card">
+        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=700&q=80" alt="Manufacturing Plant Service Upgrade" width="700" height="525" loading="lazy">
+        <div class="proj-sub-ov"><span>Industrial</span><h4>Manufacturing Plant Service Upgrade</h4></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-sub" id="panel-proj-commercial">
+    <div class="sub-hd">
+      <button class="back-btn" onclick="show('projects')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> All Projects</button>
+      <div class="sub-crumb">Projects &rsaquo; <em>Commercial</em></div>
+    </div>
+    <div class="panel-hd" style="margin-bottom:28px;">
+      <div class="sec-tag">Our Work</div>
+      <h2 class="sec-title">Commercial <em>Projects</em></h2>
+    </div>
+    <div class="proj-sub-grid">
+      <div class="proj-sub-card">
+        <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=700&q=80" alt="Office Building Electrical Retrofit" width="700" height="525" loading="lazy">
+        <div class="proj-sub-ov"><span>Commercial</span><h4>Office Building Electrical Retrofit</h4></div>
+      </div>
+      <div class="proj-sub-card">
+        <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=700&q=80" alt="Data Center Critical Power System" width="700" height="525" loading="lazy">
+        <div class="proj-sub-ov"><span>Commercial</span><h4>Data Center Critical Power System</h4></div>
+      </div>
+      <div class="proj-sub-card">
+        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=700&q=80" alt="Multi-Suite Tenant Improvement" width="700" height="525" loading="lazy">
+        <div class="proj-sub-ov"><span>Commercial</span><h4>Multi-Suite Tenant Improvement</h4></div>
+      </div>
+      <div class="proj-sub-card">
+        <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=700&q=80" alt="Retail Strip Mall Fit-Out" width="700" height="525" loading="lazy">
+        <div class="proj-sub-ov"><span>Commercial</span><h4>Retail Strip Mall Fit-Out</h4></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-sub" id="panel-proj-residential">
+    <div class="sub-hd">
+      <button class="back-btn" onclick="show('projects')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> All Projects</button>
+      <div class="sub-crumb">Projects &rsaquo; <em>Residential</em></div>
+    </div>
+    <div class="panel-hd" style="margin-bottom:28px;">
+      <div class="sec-tag">Our Work</div>
+      <h2 class="sec-title">Residential <em>Projects</em></h2>
+    </div>
+    <div class="proj-sub-grid">
+      <div class="proj-sub-card">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80" alt="Full Home Rewire & Panel Upgrade" width="700" height="525" loading="lazy">
+        <div class="proj-sub-ov"><span>Residential</span><h4>Full Home Rewire &amp; Panel Upgrade</h4></div>
+      </div>
+      <div class="proj-sub-card">
+        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=700&q=80" alt="EV Charger Installation" width="700" height="525" loading="lazy">
+        <div class="proj-sub-ov"><span>Residential</span><h4>EV Charger Installation — 3 Units</h4></div>
+      </div>
+      <div class="proj-sub-card">
+        <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=700&q=80" alt="Smart Home Wiring" width="700" height="525" loading="lazy">
+        <div class="proj-sub-ov"><span>Residential</span><h4>New Construction Smart Home Wiring</h4></div>
+      </div>
+      <div class="proj-sub-card">
+        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=700&q=80" alt="Kitchen Remodel" width="700" height="525" loading="lazy">
+        <div class="proj-sub-ov"><span>Residential</span><h4>Kitchen &amp; Addition Remodel Electrical</h4></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ABOUT SUB-PANELS ══ -->
+
+  <div class="panel panel-sub" id="panel-about-why">
+    <div class="sub-hd">
+      <button class="back-btn" onclick="show('about')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Company Overview</button>
+      <div class="sub-crumb">About &rsaquo; <em>Why Choose OGC</em></div>
+    </div>
+    <div class="sub-layout">
+      <div class="sub-txt">
+        <div class="sub-tag">Why OGC</div>
+        <h2>Why Choose <em>OGC Industries</em></h2>
+        <p>With over 15 years serving Nashville and the Southeast, OGC Industries has built a reputation on three non-negotiables: code-compliant work, on-time delivery, and transparent communication from estimate through closeout.</p>
+        <p>We operate as a licensed engineering firm and an electrical contractor — a combination that lets us self-perform design, permitting, and construction under one roof, eliminating the coordination friction that costs clients time and money.</p>
+        <div class="why-grid" style="margin-top:24px;">
+          <div class="why-card"><div class="why-num">01</div><h4>Licensed &amp; Certified</h4><p>Every electrician holds current state licenses and NEC certifications. Our engineers are PE-licensed in Tennessee.</p></div>
+          <div class="why-card"><div class="why-num">02</div><h4>Safety First</h4><p>OSHA 30-compliant on every site. We maintain a zero-incident culture backed by formal safety programs and daily toolbox talks.</p></div>
+          <div class="why-card"><div class="why-num">03</div><h4>On-Time Delivery</h4><p>Our scheduling and prefab processes are built for predictability. We hit milestones because we plan around them — not despite them.</p></div>
+          <div class="why-card"><div class="why-num">04</div><h4>Client-Focused</h4><p>Itemized quotes, no change-order surprises, and a dedicated project manager on every job. You'll always know where things stand.</p></div>
+        </div>
+        <div class="sub-cta" style="margin-top:24px;">
+          <button class="btn-primary" onclick="show('contact')">Work With Us <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+      <div class="sub-img">
+        <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80" alt="OGC team at work" width="800" height="600" loading="lazy">
+        <div class="sub-img-pair">
+          <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400&q=80" alt="Licensed professionals" width="400" height="400" loading="lazy">
+          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80" alt="Project delivery" width="400" height="400" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-sub" id="panel-about-safety">
+    <div class="sub-hd">
+      <button class="back-btn" onclick="show('about')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Company Overview</button>
+      <div class="sub-crumb">About &rsaquo; <em>Safety</em></div>
+    </div>
+    <div class="about-sub-content">
+      <div class="sub-tag">Safety Program</div>
+      <h2 class="sec-title" style="margin-bottom:20px;">Our Safety <em>Commitment</em></h2>
+      <p style="font-size:0.93rem;color:var(--silver);line-height:1.8;margin-bottom:24px;max-width:640px;">Electrical work carries real risk. OGC Industries treats safety as a core operational discipline — not a checkbox. Our comprehensive safety program meets or exceeds OSHA, NFPA 70E, and NEC requirements on every project, every day.</p>
+      <div class="safety-points">
+        <div class="safety-pt"><h4>OSHA 30 Compliance</h4><p>All crew leads hold current OSHA 30-hour certifications. Site safety plans are prepared before mobilization on every project.</p></div>
+        <div class="safety-pt"><h4>Arc Flash Program</h4><p>We conduct arc-flash hazard analyses on all energized work per NFPA 70E. Appropriate PPE is mandatory — no exceptions.</p></div>
+        <div class="safety-pt"><h4>Daily Toolbox Talks</h4><p>Every crew starts the day with a safety briefing covering task-specific hazards, weather conditions, and emergency procedures.</p></div>
+        <div class="safety-pt"><h4>Lockout / Tagout</h4><p>Strict LOTO procedures are enforced on all isolation and de-energization tasks. Verification is required before any work begins.</p></div>
+        <div class="safety-pt"><h4>Incident Reporting</h4><p>We maintain a near-miss reporting culture. Every incident — however minor — is documented, reviewed, and used to improve procedures.</p></div>
+        <div class="safety-pt"><h4>Client Site Programs</h4><p>We integrate seamlessly with owner safety programs and can provide project-specific safety plans, JSAs, and activity hazard analyses on request.</p></div>
+      </div>
+      <div class="sub-cta" style="margin-top:32px;">
+        <button class="btn-primary" onclick="show('contact')">Request a Safety Plan <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        <button class="btn-ghost" onclick="show('about')">Back to About</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-sub" id="panel-about-licenses">
+    <div class="sub-hd">
+      <button class="back-btn" onclick="show('about')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Company Overview</button>
+      <div class="sub-crumb">About &rsaquo; <em>Licenses &amp; Certifications</em></div>
+    </div>
+    <div class="about-sub-content">
+      <div class="sub-tag">Credentials</div>
+      <h2 class="sec-title" style="margin-bottom:20px;">Licenses &amp; <em>Certifications</em></h2>
+      <p style="font-size:0.93rem;color:var(--silver);line-height:1.8;margin-bottom:28px;max-width:640px;">OGC Industries holds all required state and local licenses to perform electrical contracting and engineering services in Tennessee, with active reciprocity in select neighboring states. Our team's credentials are current, verified, and available upon request.</p>
+      <div class="cert-grid">
+        <div class="cert-card"><h4>TN Electrical Contractor</h4><p>Licensed Electrical Contractor — State of Tennessee, Department of Commerce &amp; Insurance</p></div>
+        <div class="cert-card"><h4>PE License — Electrical</h4><p>Licensed Professional Engineer (Electrical), Tennessee Board of Architectural and Engineering Examiners</p></div>
+        <div class="cert-card"><h4>NEC Certification</h4><p>National Electrical Code (NFPA 70) — current cycle certification held by all journeymen and master electricians</p></div>
+        <div class="cert-card"><h4>OSHA 30-Hour</h4><p>All crew leads and site supervisors hold current OSHA 30-Hour Construction certifications</p></div>
+        <div class="cert-card"><h4>NFPA 70E — Arc Flash</h4><p>Qualified Electrical Worker status per NFPA 70E for all personnel performing energized electrical work</p></div>
+        <div class="cert-card"><h4>Liability &amp; Workers' Comp</h4><p>$2M general liability insurance and full workers' compensation coverage. Certificates of insurance furnished on request.</p></div>
+        <div class="cert-card"><h4>Nashville Metro Permits</h4><p>Active permit-pulling authority with Metro Nashville / Davidson County and surrounding jurisdictions</p></div>
+        <div class="cert-card"><h4>State Reciprocity</h4><p>Active or eligible for reciprocal licensing in Kentucky, Alabama, and Georgia. Contact us for project-specific confirmation.</p></div>
+      </div>
+      <div class="sub-cta" style="margin-top:32px;">
+        <button class="btn-primary" onclick="show('contact')">Request COI / Credentials <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        <button class="btn-ghost" onclick="show('about')">Back to About</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════
+// PAGE SWITCHER
+// ═══════════════════════════════
+// Map sub-panel ids to their parent nav tab
+const parentTab = {
+  'svc-industrial':'services','svc-commercial':'services','svc-residential':'services',
+  'svc-maintenance':'services','svc-design-build':'services','svc-emergency':'services',
+  'proj-industrial':'projects','proj-commercial':'projects','proj-residential':'projects',
+  'about-why':'about','about-safety':'about','about-licenses':'about'
+};
+
+function show(page) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('[data-page]').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById('panel-' + page);
+  if (panel) { panel.classList.add('active'); panel.scrollTop = 0; }
+  // Highlight the parent tab (or self if it's a top-level page)
+  const tabKey = parentTab[page] || page;
+  const btn = document.querySelector('[data-page="' + tabKey + '"]');
+  if (btn) btn.classList.add('active');
+  // close mobile nav
+  const nl = document.getElementById('navlinks');
+  nl.style.display = '';
+}
+
+// ═══════════════════════════════
+// SLIDER
+// ═══════════════════════════════
+let cur = 0, total = 4, timer;
+function goSlide(n) {
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.dot');
+  slides[cur].classList.remove('on');
+  dots[cur].classList.remove('on');
+  cur = (n + total) % total;
+  document.getElementById('slides').style.transform = 'translateX(-' + (cur * 100) + '%)';
+  slides[cur].classList.add('on');
+  dots[cur].classList.add('on');
+}
+function stepSlide(d) {
+  goSlide(cur + d);
+  clearInterval(timer);
+  timer = setInterval(() => goSlide(cur + 1), 5800);
+}
+timer = setInterval(() => goSlide(cur + 1), 5800);
+
+// ═══════════════════════════════
+// MOBILE NAV
+// ═══════════════════════════════
+document.getElementById('ham').addEventListener('click', () => {
+  const nl = document.getElementById('navlinks');
+  if (nl.style.display === 'flex') {
+    nl.style.display = '';
+  } else {
+    nl.style.cssText = 'display:flex;flex-direction:column;position:fixed;top:68px;left:0;right:0;background:#090b0e;padding:20px;gap:6px;border-top:1px solid rgba(204,26,26,0.2);z-index:199;';
+  }
+});
+
+// ═══════════════════════════════
+// FORM
+// ═══════════════════════════════
+document.getElementById('submitBtn').addEventListener('click', function() {
+  this.textContent = '✓ Message Sent!';
+  this.style.background = '#2a8a3a';
+  setTimeout(() => {
+    this.innerHTML = 'Send Message <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+    this.style.background = '';
+  }, 3000);
+});
+</script>
+</body>
+</html>
