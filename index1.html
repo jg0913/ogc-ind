@@ -64,8 +64,8 @@
     .map-list-wrap{flex:1;overflow-y:auto;padding:var(--space-2) 0}.map-list-wrap::-webkit-scrollbar{width:4px}.map-list-wrap::-webkit-scrollbar-thumb{background:var(--color-divider);border-radius:var(--radius-full)} .map-list-item{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-5);font-size:var(--text-sm);color:var(--color-text);cursor:pointer;transition:background var(--transition)} .map-list-item:hover{background:var(--color-surface-offset)} .map-list-item.active{background:var(--color-primary-mid);color:var(--color-primary);font-weight:600} .map-list-dot{width:7px;height:7px;border-radius:2px;background:var(--color-primary);flex-shrink:0}
     .map-foot{padding:var(--space-4) var(--space-5);border-top:1px solid var(--color-divider);background:var(--color-surface);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-3)} .map-stat{display:flex;align-items:baseline;gap:var(--space-2)} .map-stat-num{font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;color:var(--color-primary);line-height:1} .map-stat-lbl{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:500} .map-badge{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);background:var(--color-surface-offset);border:1px solid var(--color-border);border-radius:var(--radius-full);padding:.25rem var(--space-3)} .map-badge::before{content:'';display:block;width:6px;height:6px;border-radius:50%;background:var(--color-text-faint)}
     #map-tooltip{position:fixed;left:0;top:0;pointer-events:none;background:var(--color-text);color:var(--color-bg);font-family:var(--font-body);font-size:var(--text-xs);font-weight:500;padding:.35rem .65rem;border-radius:var(--radius-md);box-shadow:var(--shadow-md);white-space:nowrap;opacity:0;visibility:hidden;transform:translate3d(0,0,0);z-index:99999}
-    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-12);align-items:start} .contact-info{display:flex;flex-direction:column;gap:var(--space-4)} .contact-item{display:flex;align-items:flex-start;gap:var(--space-4);padding:var(--space-5);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)} .contact-item-icon{width:32px;height:32px;color:var(--color-primary);flex-shrink:0;margin-top:2px} .contact-item-label{font-size:var(--text-xs);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:var(--space-1)} .contact-item-val{font-size:var(--text-base);color:var(--color-text);font-weight:500}
-    form{display:flex;flex-direction:column;gap:var(--space-4)} .form-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)} .form-group{display:flex;flex-direction:column;gap:var(--space-2)} label{font-size:var(--text-xs);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-12);align-items:start} .contact-info{display:flex;flex-direction:column;gap:var(--space-4);background:transparent;background-image:none;border:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none} .contact-item{display:flex;align-items:flex-start;gap:var(--space-4);padding:var(--space-5);background:transparent;background-image:none;border:1px solid rgba(255,255,255,0.22);border-radius:var(--radius-lg);box-shadow:none} .contact-item-icon{width:32px;height:32px;color:var(--color-primary);flex-shrink:0;margin-top:2px} .contact-item-label{font-size:var(--text-xs);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:var(--space-1)} .contact-item-val{font-size:var(--text-base);color:var(--color-text);font-weight:500}
+    form{display:flex;flex-direction:column;gap:var(--space-4);background:transparent;background-image:none;border:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none} .form-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)} .form-group{display:flex;flex-direction:column;gap:var(--space-2)} label{font-size:var(--text-xs);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
     input,textarea,select{font-family:var(--font-body);font-size:var(--text-sm);padding:var(--space-3) var(--space-4);background:var(--color-surface);color:var(--color-text);border:1px solid var(--color-border);border-radius:var(--radius-md);transition:border-color var(--transition),box-shadow var(--transition)} input:focus,textarea:focus,select:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in oklch,var(--color-primary) 16%,transparent)} input::placeholder,textarea::placeholder{color:var(--color-text-faint)} textarea{resize:vertical;min-height:110px}
     .btn-submit{font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;padding:var(--space-3) var(--space-6);background:var(--color-primary);color:var(--color-text-inverse);border-radius:var(--radius-md);align-self:flex-start;letter-spacing:.02em} .btn-submit:hover{background:var(--color-primary-hover);color:var(--color-text-inverse)}
     footer{display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-8);border-top:1px solid var(--color-border);background:var(--color-surface);flex-shrink:0} footer p{font-size:var(--text-xs);color:var(--color-text-faint)} .footer-badge{font-size:var(--text-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--color-primary);background:var(--color-primary-highlight);padding:var(--space-1) var(--space-3);border-radius:var(--radius-full)}
@@ -91,6 +91,7 @@
   
     .team-section-wrap{margin-top:var(--space-10);padding-top:var(--space-8);border-top:1px solid var(--color-divider)}
   </style>
+<script src="projects-loader.js"></script>
 </head>
 <body>
   
@@ -123,8 +124,6 @@
         <p class="team-bio">As Co-Founder, Jonathan leads project execution and oversees the delivery of electrical solutions from planning through installation. A licensed Electrical Contractor with experience as an Electrical Project Engineer, he combines design expertise with hands-on construction leadership to deliver safe, efficient, and high-quality projects.</p>
       </div>
     </div>
-  </div>
-
   <p class="team-heading" style="margin-top:var(--space-10)">Our Team</p>
   <div class="staff-grid">
     <div class="staff-card coming-soon">
@@ -295,6 +294,7 @@
               </aside>
             </div>
           </div>
+          <div class="tn-project-grid" id="project-grid" aria-label="Featured work"></div>
         </div>
       </div>
     </section>
@@ -355,6 +355,12 @@
 .tn-city-btn:hover, .tn-city-btn:focus-visible { background: var(--color-surface-offset); color: var(--color-text); outline: none; }
 .tn-city-btn.active { background: color-mix(in oklch, var(--color-primary) 10%, var(--color-surface)); border-color: color-mix(in oklch, var(--color-primary) 35%, transparent); color: var(--color-primary); font-weight: 600; }
 .tn-city-btn .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.tn-project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
+.tn-project-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-5); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: var(--space-2); }
+.tn-project-city { font-size: var(--text-xs); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--color-primary); }
+.tn-project-title { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; text-transform: uppercase; letter-spacing: .02em; color: var(--color-text); line-height: 1.1; }
+.tn-project-detail { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.6; }
+.tn-project-card.is-placeholder { border-style: dashed; opacity: .82; }
 
 @media (max-width: 780px) {
   .tn-map-grid { grid-template-columns: 1fr; }
@@ -364,7 +370,9 @@
 
 <script id="tn-map-js">
 (function () {
-  var projects = [{"city": "Nashville", "project": "Commercial Tenant Improvement", "detail": "Design-assist electrical coordination, panel upgrades, and lighting controls for a fast-paced commercial build-out."}, {"city": "TBA", "project": "TBA", "detail": "To be announced."}, {"city": "TBA", "project": "TBA", "detail": "To be announced."}, {"city": "TBA", "project": "TBA", "detail": "To be announced."}];
+  // This script expects the shared project data file to be loaded first.
+  // The data lives in projects.json so the map can stay easy to update.
+  var projectDataPromise = window.OGCProjectDataPromise || Promise.resolve([]);
 
   function init() {
     var groups     = document.querySelectorAll('.city-group');
@@ -376,7 +384,7 @@
     if (!groups.length) return;
 
     function setActive(cityName, showTip, groupEl) {
-      var p = projects.find(function(x){ return x.city === cityName; });
+      var p = (window.OGCProjectData || []).find(function(x){ return x.city === cityName; });
       if (!p) return;
       activeCity.textContent = p.city;
       activePrj.textContent  = p.project;
@@ -414,19 +422,35 @@
       g.addEventListener('keydown',    function(e){ if(e.key==='Enter'||e.key===' '){ setActive(cityName, true, g); } });
     });
 
-    projects.forEach(function(p) {
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'tn-city-btn';
-      btn.setAttribute('data-city', p.city);
-      btn.innerHTML = '<span class="dot"></span>' + p.city;
-      btn.addEventListener('click',      function(){ var g=document.querySelector('.city-group[data-city="'+p.city+'"]'); setActive(p.city, false, g); });
-      btn.addEventListener('mouseenter', function(){ var g=document.querySelector('.city-group[data-city="'+p.city+'"]'); setActive(p.city, false, g); });
-      cityList.appendChild(btn);
-    });
+    projectDataPromise.then(function (projects) {
+      window.OGCProjectData = projects;
 
-    var first = document.querySelector('.city-group[data-city="Nashville"]');
-    setActive('Nashville', false, first);
+      // Render the same shared project dataset into a reusable card grid.
+      var projectGrid = document.getElementById('project-grid');
+      if (projectGrid) {
+        projectGrid.innerHTML = '';
+        projects.forEach(function (p) {
+          var card = document.createElement('article');
+          card.className = 'tn-project-card' + (p.project === 'TBA' ? ' is-placeholder' : '');
+          card.innerHTML = '<div class="tn-project-city">' + p.city + '</div><div class="tn-project-title">' + p.project + '</div><div class="tn-project-detail">' + p.detail + '</div>';
+          projectGrid.appendChild(card);
+        });
+      }
+
+      projects.forEach(function(p) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'tn-city-btn';
+        btn.setAttribute('data-city', p.city);
+        btn.innerHTML = '<span class="dot"></span>' + p.city;
+        btn.addEventListener('click',      function(){ var g=document.querySelector('.city-group[data-city="'+p.city+'"]'); setActive(p.city, false, g); });
+        btn.addEventListener('mouseenter', function(){ var g=document.querySelector('.city-group[data-city="'+p.city+'"]'); setActive(p.city, false, g); });
+        cityList.appendChild(btn);
+      });
+
+      var first = document.querySelector('.city-group[data-city="Nashville"]');
+      setActive('Nashville', false, first);
+    });
   }
 
   if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); }
