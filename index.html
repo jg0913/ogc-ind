@@ -319,9 +319,10 @@
 <style id="tn-map-css">
 /* ── Tennessee County Map ── */
 .tn-map-section { margin-top: var(--space-12); padding-top: var(--space-10); border-top: 1px solid var(--color-divider); }
-.tn-map-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); overflow: hidden; }
-.tn-map-grid { display: grid; grid-template-columns: 1fr 280px; }
-.tn-stage { position: relative; padding: clamp(.75rem,2vw,1.25rem); background: var(--color-surface); display: flex; align-items: center; justify-content: center; overflow: visible; }
+.tn-map-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); overflow: hidden; height: 500px; max-height: 500px; }
+.tn-map-grid { display: grid; grid-template-columns: 1fr 320px; height: 100%; }
+.tn-stage { position: relative; padding: clamp(.75rem,2vw,1.25rem); background: var(--color-surface); display: flex; align-items: center; justify-content: center; overflow: hidden; min-height: 100%; }
+#tn-svg { width: 100%; height: 100%; display: block; }
 .tn-map-badge { position: absolute; top: .75rem; left: .75rem; padding: .3rem .65rem; border-radius: var(--radius-full); background: var(--color-surface-2); border: 1px solid var(--color-border); font-size: var(--text-xs); letter-spacing: .06em; text-transform: uppercase; color: var(--color-text-muted); font-weight: 600; z-index: 2; }
 
 /* Counties */
@@ -348,28 +349,31 @@
 .tn-tooltip-box .tt-detail { opacity: .82; }
 
 /* Side panel */
-.tn-panel { border-left: 1px solid var(--color-divider); background: var(--color-surface-2); padding: var(--space-6) var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); }
-.tn-eyebrow { display: inline-flex; padding: .3rem .65rem; border-radius: var(--radius-full); background: color-mix(in oklch, var(--color-primary) 12%, var(--color-surface)); color: var(--color-primary); font-size: var(--text-xs); font-weight: 700; letter-spacing: .07em; text-transform: uppercase; width: fit-content; }
-.tn-active-city    { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; text-transform: uppercase; letter-spacing: .02em; color: var(--color-text); line-height: 1.1; }
-.tn-active-project { font-size: var(--text-sm); font-weight: 600; color: var(--color-primary); }
-.tn-active-detail  { font-size: var(--text-xs); color: var(--color-text-muted); line-height: 1.55; flex: 1; }
-.tn-divider  { height: 1px; background: var(--color-divider); margin: var(--space-1) 0; }
-.tn-list-label { font-size: var(--text-xs); font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--color-text-faint); }
-.tn-city-list  { display: flex; flex-direction: column; gap: var(--space-1); }
-.tn-city-btn   { text-align: left; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); border: 1px solid transparent; background: transparent; color: var(--color-text-muted); font-size: var(--text-xs); display: flex; align-items: center; gap: var(--space-2); transition: background var(--transition), border-color var(--transition), color var(--transition); }
+.tn-panel { border-left: 1px solid var(--color-divider); background: var(--color-surface-2); padding: var(--space-7) var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); height: 100%; overflow: hidden; align-items: center; }
+.tn-eyebrow { display: inline-flex; padding: .3rem .65rem; border-radius: var(--radius-full); background: color-mix(in oklch, var(--color-primary) 12%, var(--color-surface)); color: var(--color-primary); font-size: var(--text-xs); font-weight: 700; letter-spacing: .07em; text-transform: uppercase; width: fit-content; text-align: center; }
+.tn-active-city    { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; text-transform: uppercase; letter-spacing: .02em; color: var(--color-text); line-height: 1.1; text-align: center; width: 100%; }
+.tn-active-project { font-size: var(--text-sm); font-weight: 600; color: var(--color-primary); min-height: 1.6em; text-align: center; width: 100%; }
+.tn-active-detail  { font-size: var(--text-xs); color: var(--color-text-muted); line-height: 1.55; min-height: 7.2em; max-height: 7.2em; overflow: hidden; width: 100%; max-width: 30ch; text-align: center; margin-inline: auto; }
+.tn-divider  { height: 1px; background: var(--color-divider); margin: var(--space-1) 0; width: 100%; }
+.tn-list-label { font-size: var(--text-xs); font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--color-text-faint); margin-top: .05rem; width: 100%; text-align: center; padding-left: 1.25rem; }
+.tn-city-list  { display: flex; flex-direction: column; gap: var(--space-1); width: 100%; align-items: stretch; }
+.tn-city-btn   { text-align: left; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); border: 1px solid transparent; background: transparent; color: var(--color-text-muted); font-size: var(--text-xs); display: flex; align-items: center; gap: var(--space-2); transition: background var(--transition), border-color var(--transition), color var(--transition); margin-left: -.35rem; margin-right: .35rem; }
 .tn-city-btn:hover, .tn-city-btn:focus-visible { background: var(--color-surface-offset); color: var(--color-text); outline: none; }
 .tn-city-btn.active { background: color-mix(in oklch, var(--color-primary) 10%, var(--color-surface)); border-color: color-mix(in oklch, var(--color-primary) 35%, transparent); color: var(--color-primary); font-weight: 600; }
 .tn-city-btn .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 .tn-project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
-.tn-project-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-5); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: var(--space-2); }
-.tn-project-city { font-size: var(--text-xs); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--color-primary); }
-.tn-project-title { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; text-transform: uppercase; letter-spacing: .02em; color: var(--color-text); line-height: 1.1; }
-.tn-project-detail { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.6; }
+.tn-project-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-5); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: var(--space-2); text-align: left; align-items: flex-start; justify-content: flex-start; width: 100%; }
+.tn-project-card > * { width: 100%; text-align: left; }
+.tn-project-city { font-size: var(--text-xs); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--color-primary); text-align: left; }
+.tn-project-title { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; text-transform: uppercase; letter-spacing: .02em; color: var(--color-text); line-height: 1.1; text-align: left; }
+.tn-project-detail { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.6; text-align: left; }
 .tn-project-card.is-placeholder { border-style: dashed; opacity: .82; }
 
 @media (max-width: 780px) {
-  .tn-map-grid { grid-template-columns: 1fr; }
-  .tn-panel { border-left: none; border-top: 1px solid var(--color-divider); }
+  .tn-map-grid { grid-template-columns: 1fr; height: auto; }
+  .tn-map-card { height: auto; max-height: none; }
+  .tn-stage { min-height: 0; }
+  .tn-panel { border-left: none; border-top: 1px solid var(--color-divider); height: auto; }
 }
 </style>
 
